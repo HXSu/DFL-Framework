@@ -1,6 +1,5 @@
-# Decentralized Federated Learning Based on Blockchain and IPFS
-- [Decentralized Federated Learning Based on Blockchain and IPFS](#decentralized-federated-learning-based-on-blockchain-and-ipfs)
-  - [Preparation and requirements](#preparation-and-requirements)
+# Decentralized Federated Learning Based on Blockchain and IPFS  
+  - [Preparation and requirements](#preparation-and-requirements)  
     - [Clone project and set up the environment](#clone-project-and-set-up-the-environment)
     - [Install necessary softwares](#install-necessary-softwares)
     - [Turn on necessary services](#turn-on-necessary-services)
