@@ -1,0 +1,32 @@
+{   "node_id": "0",
+    "storage_paths": [
+        "./model_storage/global_model_storage",
+        "./model_storage/pending_model_storage",
+        "./model_storage/approved_model_storage",
+        "./model_storage/merged_model_storage",
+        "./model_storage/my_trained_model_storage",
+        "./model_storage/my_trained_model_storage_DP",
+        "./model_storage/partial_model_storage",
+        "./model_storage/recombination_model_storage",
+        "./model_storage/ready_for_merge_model_storage"
+    ],
+
+    "global_storage": "./model_storage/global_model_storage",
+    "pending_storage": "./model_storage/pending_model_storage",
+    "approved_storage": "./model_storage/approved_model_storage",
+    "merged_storage": "./model_storage/merged_model_storage",
+    "my_trained": "./model_storage/my_trained_model_storage",
+    "my_storage_DP": "./model_storage/my_trained_model_storage_DP",
+    "partial_storage": "./model_storage/partial_model_storage",
+    "recombination_storage": "./model_storage/recombination_model_storage",
+    "ready_for_merge_storage": "./model_storage/ready_for_merge_model_storage",
+
+    "processed_model_rcd": "./config/processed_model_rcd.json",
+    
+    "smart_contract_address": "",
+    "chain_id": 1337,
+    "host": "http://127.0.0.1:7545",
+    "abi_path": "../smart_contract/abi.json",
+    "my_address": "",
+    "my_private_key": ""
+}

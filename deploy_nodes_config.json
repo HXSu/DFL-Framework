@@ -1,0 +1,18 @@
+{
+    "nodes_num": 3,
+
+    "smart_contract_address": "0x54a2CE578e2F1Ff6c1AA11576e4B966A29BA97A0",
+    "chain_id": 1337,
+    "host": "http://127.0.0.1:7545",
+    "abi_path": "./smart_contract/abi.json",
+
+    "nodes_address": [  "0xa4406993cb1F28dfF82a1E623F04c802a99D7fCb",
+                        "0x54A2E81625a52E3B439EA2696ea0E41DA19a9dD6",
+                        "0x038acF0915343F17B9f0bd5aBD0F975F40B93DB5"
+                        ],
+                        
+    "nodes_private_key": [  "0xbb480115c4404729a13a2bdbe4e0737f47dd01a0c670443b214b52550af6407b", 
+                            "0xe7d1fcf7a75baffcca6c0d922b82be749f9093fbf33ef32701432b7b39bc9fb3",
+                            "0xf71c5d0f572c1ddd139a150b906696fc4c792695942b030738d10d477c8b3211" 
+                        ]
+}
