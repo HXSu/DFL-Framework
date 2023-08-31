@@ -1,9 +1,11 @@
-# Decentralized Federated Learning Based on Blockchain and IPFS  
-  - [Preparation and requirements](#preparation-and-requirements)  
+Decentralized Federated Learning Based on Blockchain and IPFS  
+===================================================================================================
+  - [Preparation and requirements](#preparation-and-requirements)
     - [Clone project and set up the environment](#clone-project-and-set-up-the-environment)
     - [Install necessary softwares](#install-necessary-softwares)
     - [Turn on necessary services](#turn-on-necessary-services)
     - [Deploy smart contracts to the local blockchain](#deploy-smart-contracts-to-the-local-blockchain)
+    - [Prepare your data](#prepare-your-data)
   - [Participate in the DFL as a single node](#participate-in-the-dfl-as-a-single-node)
   - [Deploy the DFL framework distributedly on local](#deploy-the-dfl-framework-distributedly-on-local)
     - [Modify the DFL framework deployment configuration](#modify-the-dfl-framework-deployment-configuration)
@@ -41,6 +43,11 @@ Specify the smart contract's constructor parameters according to the demand
 - You can use Remix website to compile and deploy the smart contracts to the local blockchain: [Remix](https://remix.ethereum.org/)
 - Or you can use Truffle to compile and deploy the smart contracts to the local blockchain: [Truffle](https://www.trufflesuite.com/docs/truffle/getting-started/installation)
 ---------------------------------------------------------------------------------------------------
+
+### Prepare your data
+1. Prepare your data and put it in the directory: `./all_data` under DFL_framework directory
+2. The data is in the form of huggingface datasets. You can refer to the [huggingface datasets](https://huggingface.co/docs/datasets/) to prepare your data
+3. There is a sample dataset in the directory: `./sample_data`, you can use it to test the DFL framework
 ## Participate in the DFL as a single node
 1. Open the terminal and enter the `./DFL_framework` directory
 2. Run the DFL framework and the interface is `front_end_menu.py`
@@ -69,11 +76,12 @@ python front_end_menu.py
 ### Run the deployment script
 1. Open the terminal and enter the project directory
 2. Run the deployment script. You can specify the deployment directory by modifying the args: `--deploy_dir`.  
-The default deployment directory is `./deploy_nodes`.
+The default deployment directory is `./deploy_nodes`  
 ```bash
 python deploy_nodes.py
 ``` 
 The number of nodes in `./deploy_nodes` is according to the `nodes_num` parameter in `./deploy_nodes_config.json`.  
-Each directory contains its own DFL framework. The DFL framework of each node is independent and can be deployed on different machines.  
+The script will automatically distribute the dataset under `./sample_data` to each node according to the `nodes_num` parameter.  
+Each directory contains its own DFL framework. The DFL framework of each node is independent and can be deployed on different machines.   
 Treat each node's directory as a single node and follow the steps in [Participate in the DFL as a single node](#participate-in-the-dfl-as-a-single-node) to interact with the DFL framework.
 
