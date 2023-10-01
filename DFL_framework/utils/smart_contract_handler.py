@@ -34,17 +34,17 @@ class SmartContractHandler:
         self.__w3.eth.wait_for_transaction_receipt(transaction_hash)
         # print("Transaction hash: %s" % transaction_hash.hex())
 
-    def tx(self):
+    def tx(self, my_gas=gas):
         nonce = self.__w3.eth.get_transaction_count(self.__my_address)
         return {
-                    "gas": gas,
+                    "gas": my_gas,
                     "gasPrice": self.__w3.eth.gas_price,
                     "chainId": self.__chain_id, 
                     "from": self.__my_address,
                     "nonce": nonce,
                 }
 
-    def deposit(self, amount = 1 ):
+    def deposit(self, amount = 1, public_key=None):
         # deposit money to smart contract for registration
         amount = amount * ether
         token_balance = self.__w3.eth.get_balance(self.__my_address)
@@ -65,7 +65,7 @@ class SmartContractHandler:
             self.sign_transaction(trans_deposit)
 
             nonce = self.__w3.eth.get_transaction_count(self.__my_address)
-            trans = self.__SC.functions.stack_node(self.__my_address).build_transaction(self.tx())
+            trans = self.__SC.functions.stack_node(self.__my_address, public_key).build_transaction(self.tx())
             self.sign_transaction(trans)
 
     def stack_pending_model(self, hash_code):
@@ -89,9 +89,9 @@ class SmartContractHandler:
         trans = self.__SC.functions.get_reward().build_transaction(self.tx())
         self.sign_transaction(trans)
 
-    def upload_partial_model(self, partial_arr):
+    def upload_partial_model(self, addr, encrypted_partial_hash):
         # upload partial model to smart contract
-        trans = self.__SC.functions.upload_partial_model(partial_arr).build_transaction(self.tx())
+        trans = self.__SC.functions.upload_partial_model(addr, encrypted_partial_hash).build_transaction(self.tx(my_gas=gas*10))
         self.sign_transaction(trans)
 
     def random_merging_index(self):
@@ -108,30 +108,12 @@ class SmartContractHandler:
         # clear all records in smart contract
         nonce = self.__w3.eth.get_transaction_count(self.__my_address)
         # print("Nonce: %s" % nonce)
-        trans = self.__SC.functions.epoch_iteration().build_transaction(
-            {   
-                "gas": gas*10,
-                "gasPrice": self.__w3.eth.gas_price,
-                "chainId": self.__chain_id, 
-                "from": self.__my_address,
-                "nonce": nonce,
-            }
-        )
+        trans = self.__SC.functions.epoch_iteration().build_transaction(self.tx(my_gas=gas*10))
         self.sign_transaction(trans)
 
     def return_deposit(self):
         # return deposit to registered address
-        nonce = self.__w3.eth.get_transaction_count(self.__my_address)
-        # print("Nonce: %s" % nonce)
-        trans = self.__SC.functions.return_deposit().build_transaction(
-            {   
-                "gas": gas*10,
-                "gasPrice": self.__w3.eth.gas_price,
-                "chainId": self.__chain_id, 
-                "from": self.__my_address,
-                "nonce": nonce,
-            }
-        )
+        trans = self.__SC.functions.return_deposit().build_transaction(self.tx(my_gas=gas*10))
         self.sign_transaction(trans)
     
 # ====================================================================================================
@@ -176,6 +158,11 @@ class SmartContractHandler:
         # return approved_nodes.length
         length = self.__SC.functions.get_approved_nodes_length().call()
         return length
+    
+    def get_node_public_key(self, addr):
+        # return node_public_key
+        node_public_key_hash = self.__SC.functions.get_node_public_key(addr).call()
+        return node_public_key_hash
 
     def get_merging_address(self):
         # return chosen merging address
