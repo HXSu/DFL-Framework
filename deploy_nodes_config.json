@@ -1,7 +1,7 @@
 {
     "nodes_num": 2,
 
-    "smart_contract_address": "0x6b0148C648D26DA66d89cD8aa007D9ddc69f83c0",
+    "smart_contract_address": "0xBd19FC292A80FdaC33B67fb63c14fb5d6FCBCDA1",
     "chain_id": 200101,
     "host": "https://rpc-devnet-cardano-evm.c1.milkomeda.com",
     "abi_path": "./smart_contract/abi.json",
