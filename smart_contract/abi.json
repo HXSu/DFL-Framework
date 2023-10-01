@@ -126,6 +126,25 @@
 				"type": "address"
 			}
 		],
+		"name": "get_node_public_key",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "addr",
+				"type": "address"
+			}
+		],
 		"name": "get_partial_model_rcd",
 		"outputs": [
 			{
@@ -261,6 +280,11 @@
 				"internalType": "address",
 				"name": "addr",
 				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "public_key",
+				"type": "string"
 			}
 		],
 		"name": "stack_node",
@@ -356,9 +380,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string[]",
-				"name": "partial_models",
-				"type": "string[]"
+				"internalType": "address",
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "partial_hash",
+				"type": "string"
 			}
 		],
 		"name": "upload_partial_model",
