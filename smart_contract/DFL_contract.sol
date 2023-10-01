@@ -18,6 +18,7 @@ contract DFL_CONTRACT {
     struct nodes{ // node register record
         address deposit_address;
         bool online;
+        string public_key;
     }
 
     struct approved_node{ // approved node record
@@ -42,9 +43,9 @@ contract DFL_CONTRACT {
     constructor() payable{
         epoch_num = 0;
         stage = 0;
-        global_model = "QmY75bMVvFW7bb1kGvnhvAnZz7FQ1QUrksABz5bKtLCSWj";
-        evaluation_threshold = 10;
-        num_nodes = 3;
+        global_model = "QmYCqc6EYoF24U38xE6sBtgKbPJY4L9zsWqqhLcNDLHCiH";
+        evaluation_threshold = 2;
+        num_nodes = 2;
     }
 
     receive() external payable {} // Function to receive Ether. msg.data must be empty
@@ -128,6 +129,16 @@ contract DFL_CONTRACT {
         return approved_nodes.length;
     }
 
+    function get_node_public_key(address addr) public view returns (string memory){
+        // return the public key of the node according to the deposit address
+        for (uint i=0; i<all_nodes.length; i++){
+            if (all_nodes[i].deposit_address == addr){
+                return all_nodes[i].public_key;
+            }
+        }
+        return "";
+    }
+
     function get_partial_model_rcd(address addr) public view returns (string [] memory){
         // get specific node's partial model record
         for (uint i=0; i<approved_nodes.length; i++){
@@ -175,9 +186,9 @@ contract DFL_CONTRACT {
 
 // ===================================================================================================
 
-    function stack_node(address addr) public{
+    function stack_node(address addr, string memory public_key) public{
         // record the node that has registered
-        all_nodes.push(nodes(addr, true));
+        all_nodes.push(nodes(addr, true, public_key));
     }
 
     function get_reward() public{
@@ -240,15 +251,11 @@ contract DFL_CONTRACT {
         }
     }
 
-    function upload_partial_model(string [] memory partial_models) public{
+    function upload_partial_model(address addr, string memory partial_hash) public{
         // upload partial model to the contract
-        uint j = 0;
         for (uint i=0; i<approved_nodes.length; i++){
-            if (approved_nodes[i].node_address == msg.sender){
-                approved_nodes[i].partial_flag = true;
-            }else{
-                approved_nodes[i].partial_rcd.push(partial_models[j]);
-                j++;
+            if (approved_nodes[i].node_address == addr){
+                approved_nodes[i].partial_rcd.push(partial_hash);
             }
         }
         if (check_partial_finished()){
