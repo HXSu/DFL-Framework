@@ -1,18 +1,16 @@
 {
-    "nodes_num": 3,
+    "nodes_num": 2,
 
-    "smart_contract_address": "0x54a2CE578e2F1Ff6c1AA11576e4B966A29BA97A0",
-    "chain_id": 1337,
-    "host": "http://127.0.0.1:7545",
+    "smart_contract_address": "0x6b0148C648D26DA66d89cD8aa007D9ddc69f83c0",
+    "chain_id": 200101,
+    "host": "https://rpc-devnet-cardano-evm.c1.milkomeda.com",
     "abi_path": "./smart_contract/abi.json",
 
-    "nodes_address": [  "0xa4406993cb1F28dfF82a1E623F04c802a99D7fCb",
-                        "0x54A2E81625a52E3B439EA2696ea0E41DA19a9dD6",
-                        "0x038acF0915343F17B9f0bd5aBD0F975F40B93DB5"
+    "nodes_address": [  "0x461e7e2fc38A0a26B13172936AA05519859D90b5",
+                        "0xCD98Cbcd7a236DaFd63b78C1D2479D27203F7ea1"
                         ],
                         
-    "nodes_private_key": [  "0xbb480115c4404729a13a2bdbe4e0737f47dd01a0c670443b214b52550af6407b", 
-                            "0xe7d1fcf7a75baffcca6c0d922b82be749f9093fbf33ef32701432b7b39bc9fb3",
-                            "0xf71c5d0f572c1ddd139a150b906696fc4c792695942b030738d10d477c8b3211" 
+    "nodes_private_key": [  "0xc598cf0b4613a140a94868609ad4c0e0b0221fc736a2035ab1dfc66f9b9cf1c1", 
+                            "0x32fb18633d385c3e7e0ae565a9084b6e9ab2832c30f2f90a0ba06af997ff7b44"
                         ]
 }
