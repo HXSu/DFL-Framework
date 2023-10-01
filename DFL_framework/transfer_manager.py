@@ -3,6 +3,7 @@ This python file is a bridge among smart contract, IPFS and DFL framework.
 """
 from utils.IPFS_controller import IPFSApiClient
 from utils.smart_contract_handler import SmartContractHandler
+from utils.gpg_encryptor import GPGEncryptor
 from utils.helper_functions import *
 import os
 
@@ -16,6 +17,7 @@ class TransferManager:
                                                             self.config["chain_id"],
                                                             self.config["my_address"],
                                                             self.config["my_private_key"])
+        self.gpg_encryptor = GPGEncryptor(self.config["gpg_home_dir"])
         self.check_storage_path()
 
     def check_storage_path(self): 
@@ -26,7 +28,17 @@ class TransferManager:
 
     def regist(self):
         # register to smart contract
-        self.smart_contract_handler.deposit()
+        node_key_fingerprint = self.gpg_encryptor.generate_key(name_real=self.config["my_address"], name_email=f"{self.config['node_id']}@example.com")
+
+        # export node's public key and upload to IPFS
+        export_path = f"{self.config['gpg_export_public_dir']}/{self.config['my_address']}_public_key.asc"
+        if not os.path.exists(export_path):
+            self.gpg_encryptor.export_my_public_key(node_key_fingerprint, export_path)
+
+        # upload public key to IPFS
+        node_public_key_hash = self.upload_file_to_IPFS(export_path)
+        
+        self.smart_contract_handler.deposit(1 ,node_public_key_hash)
         
     def stack_processed_rcd(self, hash_code, rcd_path):
         # record processed model
@@ -51,16 +63,25 @@ class TransferManager:
     def download_global_model(self):
         # download global model from IPFS
         # extract tar file to global storage
-        global_model_hash_code = self.smart_contract_handler.get_global_model_info()
-        try:
-            print("Downloading global model from IPFS...")
-            self.IPFS_controller.download_hash(global_model_hash_code, self.config["global_storage"]+".tar.gz")
-            extract_tarfile(self.config["global_storage"]+".tar.gz", self.config["global_storage"])
-            print("Downloaded!!!")
-            return global_model_hash_code
-        except:
-            print("Download failed!")
-            return None
+        dl_name = self.config["global_storage"]+'/glob_adp.tar.gz'
+        aim_dir = self.config["global_storage"]+'/glob_adp/'
+        if os.listdir(self.config["global_storage"]) == []:
+
+            global_model_hash_code = self.smart_contract_handler.get_global_model_info()
+            try:
+                print("Downloading global model from IPFS...")
+                self.IPFS_controller.download_hash(global_model_hash_code, dl_name)
+
+                if not os.path.exists(aim_dir):
+                    os.makedirs(aim_dir)
+                extract_tarfile(dl_name, aim_dir)
+                print("Downloaded!!!")
+                return aim_dir
+            except:
+                print("Download failed!")
+                return None
+        else:
+            return aim_dir
         
     def stack_my_model_to_pending(self, my_model_hash_code):
         # stack my model to pending model array in smart contract
@@ -73,9 +94,25 @@ class TransferManager:
         # if the evaluation score is higher than the threshold, approve the model
         self.smart_contract_handler.update_pending_model_evaluation_score(index, evaluation_score)
 
-    def upload_partial_model(self, partial_hash_code):
+    def get_key_fingerprint(self, node_address):
+        # import public key to gpg
+        public_key_hash = self.smart_contract_handler.get_node_public_key(node_address)
+        key_path = f"{self.config['gpg_import_public_dir']}/{public_key_hash}.asc"
+        self.download_file_from_IPFS(public_key_hash, key_path)
+        import_result = self.gpg_encryptor.import_public_key(key_path)
+        return import_result.fingerprints[0]
+    
+    def encrypt_message(self, message, fingerprint):
+        # encrypt message with fingerprint
+        return self.gpg_encryptor.encrypt_message(message, fingerprint)
+    
+    def decrypt_message(self, encrypted_message):
+        # decrypt message
+        return self.gpg_encryptor.decrypt_message(encrypted_message)
+
+    def upload_partial_model(self, addr, encrypted_partial_hash):
         # upload partial model to smart contract
-        self.smart_contract_handler.upload_partial_model(partial_hash_code)
+        self.smart_contract_handler.upload_partial_model(addr, encrypted_partial_hash)
 
     def stack_ready_for_merge(self, hash_code):
         # stack ready-for-merging model to smart contract
@@ -86,14 +123,17 @@ class TransferManager:
         # return a list of ready model dirs
         try: 
             print("Downloading ready-for-merging model states...")
-            ready_model_dirs = []
+            ready_model_state_path = []
             ready_model_arry = self.smart_contract_handler.get_ready_for_merge()
-            download_path = self.config["ready_for_merge_storage"]
             for i in range(len(ready_model_arry)):
-                self.download_file_from_IPFS(ready_model_arry[i], f"{download_path}/ready_model_{i}.pt")
-                ready_model_dirs.append(f"{download_path}/ready_model_{i}.pt")
+                
+                dl_state_file = self.config["ready_for_merge_storage"] + f"/ready_model_{i}.pt"
+
+                self.download_file_from_IPFS(ready_model_arry[i], dl_state_file)
+
+                ready_model_state_path.append(dl_state_file)
             print("Downloaded!!!")
-            return ready_model_dirs
+            return ready_model_state_path
         except:
             print("Download failed!")
             return None
@@ -186,6 +226,7 @@ class TransferManager:
             return True
         else:
             return False
+    @property
     def approved_nodes_arr(self):
         # return approved_nodes array
         return self.smart_contract_handler.get_approved_nodes()
