@@ -17,7 +17,7 @@ stage_dict = {
             }
 def print_menu():
     print()
-    print("MENU<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+    print("MENU<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
     print("Welcome to Decentralized Federated Learning(DFL) system!")
     print(f"Current stage: {tm.stage}: {stage_dict[str(tm.stage)]}")
     print("Please choose the following options:")
@@ -26,7 +26,7 @@ def print_menu():
     print("3. Evaluate: Evaluating others' trained models")
     print("4. Aggregation: Merge all approved models into a new global model")
     print("5. Exit: Exit the system")
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
     try:
         choice = func_timeout(600, lambda: input("Please input your choice (1/2/3/4/5): "))
