@@ -61,7 +61,7 @@ def deploy():
     distribute_num = deploy_config["nodes_num"]
     node_folder_dirs = os.listdir(f"{args.deploy_dir}") # get all node folder dirs
     # load all data first
-    all_data_path = "./sample_data/sample_data60000.parquet"
+    all_data_path = deploy_config["all_data_path"]
     all_data = load_dataset("parquet", data_files=all_data_path, split="train")
 
     # split all data into distribute_num parts and distribute to each node folder
