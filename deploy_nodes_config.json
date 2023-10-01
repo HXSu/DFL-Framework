@@ -5,6 +5,7 @@
     "chain_id": 200101,
     "host": "https://rpc-devnet-cardano-evm.c1.milkomeda.com",
     "abi_path": "./smart_contract/abi.json",
+    "all_data_path": "./sample_data/sample_data6000.parquet",
 
     "nodes_address": [  "0x461e7e2fc38A0a26B13172936AA05519859D90b5",
                         "0xCD98Cbcd7a236DaFd63b78C1D2479D27203F7ea1"
