@@ -4,31 +4,61 @@ Before aggregation, approved nodes will do the SMPC process first.
 Including: upload partial models; downloading partial models; recombination; upload recombined model.
 """
 from transfer_manager import TransferManager
-# from transformers import AutoModelForSeq2SeqLM
-from transformers import GPT2LMHeadModel
-import torch
 from func_timeout import func_timeout, FunctionTimedOut
+from utils.helper_functions import *
 import os
+
+import torch
+
+from transformers import (
+    AutoConfig,
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+)
+from peft import *
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+tokenizer = AutoTokenizer.from_pretrained('tiiuae/falcon-7b-instruct')
+tokenizer.pad_token = tokenizer.eos_token
 
 tm = TransferManager() # initialize transfer manager
 stage = tm.stage
 
 def merge():
-    # download x approved models' states and save the directories
-    ready_model_dirs = tm.download_all_ready_models()
+    # download x approved models and save the directories
+    state_path_arry = tm.download_all_ready_models()
 
-    # merge using FedAvg
-    model = GPT2LMHeadModel.from_pretrained(tm.config["global_storage"])
-    model_state_dict = torch.load(ready_model_dirs[0])
-    for i in range(1, len(ready_model_dirs)):
-        model_state_dict_i = torch.load(ready_model_dirs[i])
-        for key in model_state_dict:
-            model_state_dict[key] += model_state_dict_i[key]
-    for key in model_state_dict:
-        model_state_dict[key] = model_state_dict[key]/ len(ready_model_dirs)
-    model.load_state_dict(model_state_dict)
-    
-    print(model_state_dict["transformer.h.0.ln_1.weight"])
+    BASE_MODEL_NAME = 'FieldSu/distil_student_24'
+    MODE_CAHE = './base_model'
+    model = AutoModelForCausalLM.from_pretrained(
+        BASE_MODEL_NAME,
+        # return_dict=True,
+        # quantization_config=bnb_config,
+        device_map="auto",
+        trust_remote_code=True,
+        cache_dir=MODE_CAHE
+    )
+
+    glob_adp = tm.config["global_storage"]+'/glob_adp/'
+    model = PeftModel.from_pretrained(model, glob_adp, cache_dir=MODE_CAHE)
+    model.to(device)
+
+    avg_state = {}
+    for i in range(len(state_path_arry)):
+        state_i = torch.load(state_path_arry[i])
+        for key in state_i:
+            if i == 0:
+                avg_state[key] = state_i[key]
+            else:
+                avg_state[key] += state_i[key]
+
+    for key in avg_state:
+        avg_state[key] = avg_state[key] / len(state_path_arry)
+
+    model.load_state_dict(avg_state)
+
     # save the merged model
     if not os.path.exists(tm.config["merged_storage"]):
         os.makedirs(tm.config["merged_storage"])
@@ -36,8 +66,11 @@ def merge():
     model.save_pretrained(tm.config["merged_storage"])
 
     # upload the merged model
-    merged_model_hash_code = tm.upload_merged_model()
+    tar_file_path = tm.config["merged_storage"] + "/merged_model.tar.gz"
+    make_tarfile(tar_file_path, tm.config["merged_storage"])
+    merged_model_hash_code = tm.upload_merged_model(tar_file_path)
     tm.update_global_model(merged_model_hash_code)
+
 
 def aggregation():
     print()
