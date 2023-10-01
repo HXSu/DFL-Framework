@@ -37,7 +37,7 @@
     "my_private_key": "",
 
 
-    "gpg_home_dir": "F:/1MY_APPS/GnuPG/bin/gpg.exe",
+    "gpg_home_dir": "~/.gnupg",
     "gpg_export_public_dir": "./gpg_storage/export_public",
     "gpg_import_public_dir": "./gpg_storage/import_public"
 }
