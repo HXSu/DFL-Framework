@@ -8,8 +8,14 @@
         "./model_storage/my_trained_model_storage_DP",
         "./model_storage/partial_model_storage",
         "./model_storage/recombination_model_storage",
-        "./model_storage/ready_for_merge_model_storage"
+        "./model_storage/ready_for_merge_model_storage",
+        "./gpg_storage/export_public",
+        "./gpg_storage/import_public",
+        "./all_data"
+
     ],
+
+    "data_path": "./all_data/",
 
     "global_storage": "./model_storage/global_model_storage",
     "pending_storage": "./model_storage/pending_model_storage",
@@ -28,5 +34,10 @@
     "host": "http://127.0.0.1:7545",
     "abi_path": "../smart_contract/abi.json",
     "my_address": "",
-    "my_private_key": ""
+    "my_private_key": "",
+
+
+    "gpg_home_dir": "F:/1MY_APPS/GnuPG/bin/gpg.exe",
+    "gpg_export_public_dir": "./gpg_storage/export_public",
+    "gpg_import_public_dir": "./gpg_storage/import_public"
 }
